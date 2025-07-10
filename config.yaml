@@ -1,0 +1,11 @@
+data_paths:
+  students: "kelaniya_students.csv"
+  gpa: "kelaniya_gpa.csv"
+  internships: "kelaniya_internships.csv"
+  projects: "kelaniya_projects.csv"
+  capstone: "kelaniya_capstone.csv"
+  certifications: "kelaniya_certifications.csv"
+  placement: "kelaniya_placement.csv"
+  courses: "kelaniya_courses.csv"
+  industry: "kelaniya_industry.csv"
+  industry_trends: "kelaniya_industry_trends.csv"
