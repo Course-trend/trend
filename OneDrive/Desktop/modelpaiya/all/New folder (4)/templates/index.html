@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Input Form{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Student Information Form</h2>
+                <form action="{{ url_for('predict') }}" method="POST">
+                    <div class="row">
+                        <!-- Required Fields -->
+                        <h4 class="mb-3">Required Information</h4>
+                        {% for field_name, field_config in schema.required_fields.items() %}
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ field_name }}" class="form-label required">
+                                {{ field_config.description }}
+                            </label>
+                            
+                            {% if field_config.get('options') %}
+                            <select class="form-select" id="{{ field_name }}" name="{{ field_name }}" required>
+                                <option value="">Select {{ field_name.replace('_', ' ').title() }}</option>
+                                {% for option in field_config.options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                                {% endfor %}
+                            </select>
+                            {% else %}
+                            <input type="{% if field_config.type == int %}number{% else %}text{% endif %}"
+                                   class="form-control"
+                                   id="{{ field_name }}"
+                                   name="{{ field_name }}"
+                                   {% if field_config.get('min') is not none %}min="{{ field_config.min }}"{% endif %}
+                                   {% if field_config.get('max') is not none %}max="{{ field_config.max }}"{% endif %}
+                                   required>
+                            {% endif %}
+                            
+                            {% if field_config.get('min') is not none and field_config.get('max') is not none %}
+                            <div class="form-text">
+                                Range: {{ field_config.min }} - {{ field_config.max }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        <!-- Optional Fields -->
+                        <h4 class="mb-3 mt-4">Optional Information</h4>
+                        <p class="text-muted mb-3">Providing more information will improve prediction accuracy</p>
+                        
+                        {% for field_name, field_config in schema.optional_fields.items() %}
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ field_name }}" class="form-label">
+                                {{ field_config.description }}
+                            </label>
+                            
+                            {% if field_config.get('options') %}
+                            <select class="form-select" id="{{ field_name }}" name="{{ field_name }}">
+                                <option value="">Select {{ field_name.replace('_', ' ').title() }}</option>
+                                {% for option in field_config.options %}
+                                <option value="{{ option }}">{{ option }}</option>
+                                {% endfor %}
+                            </select>
+                            {% else %}
+                            <input type="{% if field_config.type == int %}number{% else %}text{% endif %}"
+                                   class="form-control"
+                                   id="{{ field_name }}"
+                                   name="{{ field_name }}"
+                                   {% if field_config.get('min') is not none %}min="{{ field_config.min }}"{% endif %}
+                                   {% if field_config.get('max') is not none %}max="{{ field_config.max }}"{% endif %}>
+                            {% endif %}
+                            
+                            {% if field_config.get('min') is not none and field_config.get('max') is not none %}
+                            <div class="form-text">
+                                Range: {{ field_config.min }} - {{ field_config.max }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Get Career Prediction</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add client-side validation for numeric fields
+    const numericInputs = document.querySelectorAll('input[type="number"]');
+    numericInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            const min = parseFloat(this.getAttribute('min'));
+            const max = parseFloat(this.getAttribute('max'));
+            const value = parseFloat(this.value);
+            
+            if (value < min) this.value = min;
+            if (value > max) this.value = max;
+        });
+    });
+});
+</script>
+{% endblock %} 

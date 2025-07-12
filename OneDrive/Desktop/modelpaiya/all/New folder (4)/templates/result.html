@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Results{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        {% if prediction.get('error') %}
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Error</h4>
+            <p>{{ prediction.error }}</p>
+            <p>{{ prediction.message }}</p>
+            <hr>
+            <p class="mb-0">
+                <a href="{{ url_for('home') }}" class="btn btn-outline-danger">Try Again</a>
+            </p>
+        </div>
+        {% else %}
+        <!-- Salary Prediction -->
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h3 class="card-title">Predicted Starting Salary</h3>
+                <h2 class="display-4 text-primary">
+                    LKR {{ "{:,.2f}".format(prediction.predicted_salary.amount) }}
+                </h2>
+                <p class="text-muted">
+                    Confidence Range: LKR {{ "{:,.2f}".format(prediction.predicted_salary.confidence_interval.lower) }} - 
+                    {{ "{:,.2f}".format(prediction.predicted_salary.confidence_interval.upper) }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Student Profile -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title">Your Profile Summary</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Academic Performance:</strong> {{ prediction.student_profile.academic_performance }}</p>
+                        <p><strong>Experience Score:</strong> {{ "%.1f"|format(prediction.student_profile.experience_score) }}/10</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Pathway:</strong> {{ prediction.student_profile.pathway }}</p>
+                        <p><strong>Progress:</strong> {{ prediction.student_profile.completion_status }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insights -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title">Career Insights</h4>
+                {% for insight in prediction.insights %}
+                <div class="insight-item">
+                    {{ insight }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title">Recommendations</h4>
+                {% for recommendation in prediction.recommendations %}
+                <div class="recommendation-item">
+                    {{ recommendation }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center mt-4">
+            <a href="{{ url_for('home') }}" class="btn btn-primary me-3">Make Another Prediction</a>
+            <button class="btn btn-outline-secondary" onclick="window.print()">Print Results</button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 
